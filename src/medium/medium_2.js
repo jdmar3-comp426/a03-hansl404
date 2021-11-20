@@ -19,10 +19,44 @@ see under the methods section
  *
  * @param {allCarStats.ratioHybrids} ratio of cars that are hybrids
  */
+export function getavgMpg(arr) {
+    let total_city_mpg = 0
+    let total_highway_mpg = 0
+    for (let i = 0; i < arr.length; i++) {
+        let currentcar = arr[i]
+        total_city_mpg += currentcar.city_mpg
+        total_highway_mpg += currentcar.highway_mpg
+    }
+    let avg_city_mpg = total_city_mpg / arr.length
+    let avg_highway_mpg = total_highway_mpg / arr.length
+
+    return {avg_city_mpg, avg_highway_mpg}
+}
+
+// ???
+export function getallYearStats(arr) {
+    let years = []
+    for (let i = 0; i < arr.length; i++) {
+        years[i] = mpg_data[i].year
+    }
+    return getStatistics(years)
+}
+
+export function getratioHybrids(arr) {
+    let num_hybrids = 0
+    for (let i = 0; i < arr.length; i++) {
+        let currentcar = mpg_data[i]
+        if (currentcar.hybrid) {
+            num_hybrids++
+        }
+    }
+    return num_hybrids / arr.length
+}
+
 export const allCarStats = {
-    avgMpg: undefined,
-    allYearStats: undefined,
-    ratioHybrids: undefined,
+    avgMpg: getavgMpg(mpg_data),
+    allYearStats: getallYearStats(mpg_data),
+    ratioHybrids: getratioHybrids(mpg_data),
 };
 
 
@@ -83,7 +117,75 @@ export const allCarStats = {
  *
  * }
  */
+
+export function getmakerHybrids(arr) {
+    let all_hybrids = arr.filter(car => car.hybrid)
+
+    let result = []
+
+    all_hybrids.forEach(hybrid => {
+        let make = hybrid.make
+        let id = hybrid.id
+        
+        // check if the make is in the result array and if so find the index
+        let already_registered = false
+        let registered_index = -1
+        for (let i = 0; i < result.length; i++) {
+            if (result[i].make == make) {
+                already_registered = true
+                registered_index = i
+            }
+        }
+        
+        // put stuff onto the result array depending on if the make is already in it or not
+        if (already_registered) {
+            result[registered_index].hybrids.push(id)
+        } else {
+            result.push({make: make, hybrids: [id]})
+        }
+    })
+
+    // sort by number of hybrids in the hybrids array
+    result.sort((a,b) => b.hybrids.length - a.hybrids.length)
+
+    return result
+}
+
+export function getavgMpgByYearAndHybrid(arr) {
+    let result = {}
+    let years = []
+
+    // get all the years
+    arr.forEach(car => {
+        let car_year = car.year
+        if (!years.contains(car_year)) {
+            years.push(car_year)
+        }
+    })
+    // sort the years by ascending order
+    years.sort((a,b) => a - b)
+
+    // get all the hybrids and nonhybrids for each year and append to result
+    for (let i = 0; i < years.length; i++) {
+        let year = years[i]
+        let hybrids_of_year = arr.filter(car => car.hybrid && car.year == year)
+        let nonhybrids_of_year = arr.filter(car => !car.hybrid && car.year == year)
+
+        // put data in object
+        let obj = {
+            hybrid: getavgMpg(hybrids_of_year),
+            notHybrid: getavgMpg(nonhybrids_of_year)
+        }
+
+        // put the data object in result with the appropriate key
+        result[year] = obj
+    }
+
+    return result
+    
+}
+
 export const moreStats = {
-    makerHybrids: undefined,
-    avgMpgByYearAndHybrid: undefined
+    makerHybrids: getmakerHybrids(mpg_data),
+    avgMpgByYearAndHybrid: getavgMpgByYearAndHybrid(mpg_data)
 };
