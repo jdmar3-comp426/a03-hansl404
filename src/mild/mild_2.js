@@ -51,7 +51,7 @@ export function identifyArray(array) {
  obj now does not contain the `password` field
  */
 export function removeKey(object, key) {
-   delete object.key
+   delete object[key]
 }
 
 /**
@@ -72,7 +72,7 @@ export function removeKey(object, key) {
  */
 export function removeKeyNonDestructive(object, key) {
    const copy = {...object}
-   delete copy.key
+   delete copy[key]
    return copy
 }
 
@@ -98,7 +98,9 @@ export function removeKeyNonDestructive(object, key) {
  * @return {*} The object with its keys removed.
  */
 export function removeKeys(object, keyList) {
-   keyList.forEach( key => {
+   let objcopy = {}
+   objcopy = {...object}
+   objcopy.forEach( key => {
       delete object[key]
    })
    return object
