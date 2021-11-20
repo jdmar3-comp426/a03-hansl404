@@ -103,5 +103,5 @@ export function removeKeys(object, keyList) {
    for (let i = 0; i < keyList.length; i++) {
       delete objcopy[keyList[i]]
    }
-   return object
+   return objcopy
 }

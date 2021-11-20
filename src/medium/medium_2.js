@@ -158,7 +158,7 @@ export function getavgMpgByYearAndHybrid(arr) {
     // get all the years
     arr.forEach(car => {
         let car_year = car.year
-        if (!years.contains(car_year)) {
+        if (!years.includes(car_year)) {
             years.push(car_year)
         }
     })
