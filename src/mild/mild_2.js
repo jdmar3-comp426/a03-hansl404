@@ -100,8 +100,8 @@ export function removeKeyNonDestructive(object, key) {
 export function removeKeys(object, keyList) {
    let objcopy = {}
    objcopy = {...object}
-   objcopy.forEach( key => {
-      delete object[key]
-   })
+   for (let i = 0; i < keyList.length; i++) {
+      delete objcopy[keyList[i]]
+   }
    return object
 }
